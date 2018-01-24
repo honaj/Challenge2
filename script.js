@@ -5,9 +5,6 @@ let resultText = document.getElementById("resultText");
 let mouseDown = false;
 let x;
 let y;
-//let controlImage;
-//let score;
-let rArray = [];
 can.lineWidth = 10;
 can.strokeStyle = "red";
 
@@ -43,44 +40,41 @@ function setMouseUp(evt)
     mouseDown = false;
 }
 
-function storePixels()
+function redChannelToArray()
 {
     let getImage = can.getImageData(0, 0, can.canvas.width, can.canvas.height);
+    let pixelArray = [];
     for(let i = 0; i < getImage.data.length; i += 4)
     {
-        rArray.push(getImage.data[i]);
-        //console.log(rArray[i]);
+        pixelArray.push(getImage.data[i]);
     }
-    console.log(rArray.length);
-    //localStorage.setItem("controlImage", JSON.stringify(can.getImageData(0, 0, can.canvas.width, can.canvas.height)));
-    localStorage.setItem("controlPixels", )
+    return pixelArray;
+}
+
+function storePixels()
+{
+    let controlArray = redChannelToArray();
+    localStorage.setItem("controlArray", JSON.stringify(controlArray));
     can.clearRect(0, 0, can.canvas.width, can.canvas.height);
 }
 
 function comparePixels()
 {
-    if(localStorage.getItem("controlImage") == null)
-    {
-        console.log("null");
-    }
-    else
-    {
-        console.log("not null");
-    }
     let score = 0;
-    let controlImage = JSON.parse(localStorage.getItem("controlImage"));
-    let newImage = can.getImageData(0, 0, can.canvas.width, can.canvas.height);
-    console.log(controlImage.data.length);
-    for(let i = 0; i < controlImage.data.length; i++)
+    let newArray = redChannelToArray();
+    let controlArray = JSON.parse(localStorage.getItem("controlArray"));
+    for(let i = 0; i < newArray.length; i++)
     {
-        console.log("test");
-        if(controlImage.data[i] == newImage.data[i])
+        if( controlArray[i] == newArray[i])
         {
-            score++;       
+            score ++;
+            //console.log(controlArray[i]);
         }
     }
+    console.log("controlArrayLength: " +  controlArray.length);
+    console.log("newArrayLength: " + newArray.length);
     console.log("score is " + score);
-    if(score > controlImage.data.length * 0.98)
+    if(score > controlArray.length * 0.95)
     {
         resultText.innerHTML = "Success!";
     }
