@@ -40,21 +40,28 @@ function setMouseUp(evt)
     mouseDown = false;
 }
 
+//Get image data and turn red channel into an array of bools
 function redChannelToArray()
 {
     let getImage = can.getImageData(0, 0, can.canvas.width, can.canvas.height);
     let pixelArray = [];
     for(let i = 0; i < getImage.data.length; i += 4)
     {
-        pixelArray.push(getImage.data[i]);
+        if(getImage.data[i] == 0)
+        {
+            pixelArray.push(true);
+        }
+        else
+        {
+            pixelArray.push(false);
+        }
     }
     return pixelArray;
 }
 
 function storePixels()
 {
-    let controlArray = redChannelToArray();
-    localStorage.setItem("controlArray", JSON.stringify(controlArray));
+    localStorage.setItem("controlArray", JSON.stringify(redChannelToArray()));
     can.clearRect(0, 0, can.canvas.width, can.canvas.height);
 }
 
@@ -63,18 +70,24 @@ function comparePixels()
     let score = 0;
     let newArray = redChannelToArray();
     let controlArray = JSON.parse(localStorage.getItem("controlArray"));
+    let scoreArray = [];
     for(let i = 0; i < newArray.length; i++)
     {
-        if( controlArray[i] == newArray[i])
+        if(controlArray[i])
         {
-            score ++;
-            //console.log(controlArray[i]);
+            scoreArray.push(controlArray[i]);
+            if(controlArray[i] == newArray[i])
+            {
+                score ++;
+            }
         }
+
     }
-    console.log("controlArrayLength: " +  controlArray.length);
-    console.log("newArrayLength: " + newArray.length);
+    // console.log("controlArrayLength: " +  controlArray.length);
+    // console.log("newArrayLength: " + newArray.length);
+    console.log(scoreArray.length);
     console.log("score is " + score);
-    if(score > controlArray.length * 0.95)
+    if(score > scoreArray.length * 0.95)
     {
         resultText.innerHTML = "Success!";
     }
