@@ -1,0 +1,10 @@
+#myCanvas
+{
+    border-width: 0.1em;
+    border-style: solid;
+}
+
+#resultText
+{
+    font-size: 5em;
+}
